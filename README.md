@@ -13,10 +13,10 @@ At last, one Yoli that really helps you!
 1.Install Yoli Shell on your server:
 
 ```bash
-curl -s https://raw.githubusercontent.com/jlopezr/ysh/master/server.py | bash
+curl -s https://raw.githubusercontent.com/jlopezr/ysh/master/server.py > server.py
 ```
 
-2.Execute it
+2.Execute it, you only need Python 3:
 
 ```bash
 python3 server.py
@@ -33,4 +33,31 @@ or
 ```bash
 set YSH_KEY=mypassword
 python3 server.py
+```
+
+### Client
+
+1.Install Yoli Shell on your client:
+
+```bash
+curl -s https://raw.githubusercontent.com/jlopezr/ysh/master/yoli.py > yoli.py
+```
+
+2.Set the server URL and optionally the password:
+
+```bash
+set YSH_SERVER=http://myserver.com:8000
+set YSH_KEY=mypassword
+```
+
+3.Execute it:
+
+```bash
+yoli.py ls -lF
+```
+
+or
+
+```bash
+yoli.py "cd / && ls -lF"
 ```
