@@ -1,13 +1,27 @@
 #!/usr/bin/env python3
 
+import os
+import sys
 import http.server
 import socketserver
 import subprocess
 import urllib.parse
-import shlex
 
 PORT = 8000
 exit_code = None
+security_key = None
+
+# Check for --key option
+if len(sys.argv) > 1 and sys.argv[1] == '--key' and len(sys.argv) > 2:
+    security_key = sys.argv[2]
+# Check for YSH_KEY environment variable
+elif 'YSH_KEY' in os.environ:
+    security_key = os.environ['YSH_KEY']
+
+if security_key:
+    print("Security key is set.")
+else:
+    print("Warning: No security key is set. Anyone can execute commands.")
 
 def get_exit_code():
     global exit_code
@@ -28,6 +42,20 @@ def run(command, remove_newline=True):
 
 class ShellCommandHandler(http.server.SimpleHTTPRequestHandler):
     def do_GET(self):
+        global security_key
+        print("Security Key:", security_key)
+        if security_key:
+            # Check for YSH-KEY header
+            #print("Checking for key", security_key)
+            request_key = self.headers.get('YSH-KEY')
+            #print("Found key", request_key)
+            if request_key != security_key:
+                self.send_response(403)
+                self.send_header('Content-type', 'text/plain')
+                self.end_headers()
+                self.wfile.write(b'Forbidden: Invalid or missing YSH-KEY header')
+                return
+
         parsed_path = urllib.parse.urlparse(self.path)
         query = urllib.parse.parse_qs(parsed_path.query)
         command = query.get('cmd', [None])[0]
@@ -39,7 +67,6 @@ class ShellCommandHandler(http.server.SimpleHTTPRequestHandler):
             for line in run(command, remove_newline=False):
                 self.wfile.write(line.encode())
                 self.wfile.flush()
-            print("DONE!")
             exit_code = get_exit_code()
             self.wfile.write(f"\nExit Code: {exit_code}".encode())
         else:
