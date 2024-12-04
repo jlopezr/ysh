@@ -61,3 +61,31 @@ or
 ```bash
 yoli.py "cd / && ls -lF"
 ```
+
+## Best practices
+
+### Supervisor
+
+You can use a process manager like supervisor or systemd to ensure that your server restarts if it crashes or if the console is closed. Here is an example using supervisor.
+
+```bash
+pip3 install supervisor
+```
+
+Then create a configuration file for supervisor:
+
+```bash
+[program:ysh_server]
+command=python3 /Users/juan/ysh/server.py
+autostart=true
+autorestart=true
+stderr_logfile=/var/log/ysh_server.err.log
+stdout_logfile=/var/log/ysh_server.out.log
+```
+
+Then run supervisor with the configuration file:
+
+```bash
+supervisord -c /Users/juan/ysh/supervisord.conf
+```
+
