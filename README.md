@@ -13,7 +13,7 @@ At last, one Yoli that really helps you!
 1.Install Yoli Shell on your server:
 
 ```bash
-curl -s https://raw.githubusercontent.com/jlopezr/ysh/master/server.py > server.py
+curl -s https://raw.githubusercontent.com/jlopezr/ysh/master/server.py > ysh.py
 ```
 
 2.Execute it, you only need Python 3:
@@ -89,3 +89,37 @@ Then run supervisor with the configuration file:
 supervisord -c /Users/juan/ysh/supervisord.conf
 ```
 
+### Systemd
+
+You can use systemd to ensure that your server restarts if it crashes or if the console is closed. Here is an example using systemd.
+
+```bash
+sudo nano /etc/systemd/system/ysh.service
+```
+
+Then add the following content:
+
+```bash
+[Unit]
+Description=YSH Server
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/python3 /Users/juan/server.py
+WorkingDirectory=/tmp
+Restart=always
+User=ubuntu
+Environment=YSH_KEY=mypassword
+Environment=YSH_PORT=8080
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Then run the following commands:
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable ysh
+sudo systemctl start ysh
+```
