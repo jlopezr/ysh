@@ -64,7 +64,7 @@ yoli.py "cd / && ls -lF"
 
 ## Best practices
 
-### Supervisor
+### Supervisor
 
 You can use a process manager like supervisor or systemd to ensure that your server restarts if it crashes or if the console is closed. Here is an example using supervisor.
 
@@ -89,7 +89,7 @@ Then run supervisor with the configuration file:
 supervisord -c /Users/juan/ysh/supervisord.conf
 ```
 
-### Systemd
+### Systemd
 
 You can use systemd to ensure that your server restarts if it crashes or if the console is closed. Here is an example using systemd.
 
